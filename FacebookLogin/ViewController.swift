@@ -23,7 +23,7 @@ class ViewController : UIViewController, FBSDKLoginButtonDelegate {
             self.pictureView = FBSDKProfilePictureView(frame: CGRect(x: 50, y: 100, width: 200, height: 200))
             self.view.addSubview(self.userName!)
             self.view.addSubview(self.pictureView!)
-            let req = FBSDKGraphRequest(graphPath: "me", parameters: nil)
+            let req = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, email"])
             req.startWithCompletionHandler({ (connection, result , error: NSError!) -> Void in
                 if (error == nil) {
                     let resultDict = result as! Dictionary<String, String>
@@ -49,22 +49,14 @@ class ViewController : UIViewController, FBSDKLoginButtonDelegate {
     func loginButton(loginButton: FBSDKLoginButton!, didCompleteWithResult result: FBSDKLoginManagerLoginResult!, error: NSError!) {
         if(error == nil) {
             print("Logged in!")
-            let pictureRequest = FBSDKGraphRequest(graphPath: "me", parameters: nil)
-            pictureRequest.startWithCompletionHandler({
-                (connection, result, error: NSError!) -> Void in
-                if error == nil {
-                    let req = FBSDKGraphRequest(graphPath: "me", parameters: nil)
-                    req.startWithCompletionHandler({ (connection, result , error: NSError!) -> Void in
-                        if (error == nil) {
-                            let resultDict = result as! Dictionary<String, String>
-                            self.userName!.text = resultDict["name"]
-                            self.pictureView?.profileID = resultDict["id"]
-                        }
-                        
-                    })
-                } else {
-                    print("\(error)")
+            let req = FBSDKGraphRequest(graphPath: "me", parameters: ["fields": "id, name, email"])
+            req.startWithCompletionHandler({ (connection, result , error: NSError!) -> Void in
+                if (error == nil) {
+                    let resultDict = result as! Dictionary<String, String>
+                    self.userName!.text = resultDict["name"]
+                    self.pictureView?.profileID = resultDict["id"]
                 }
+                
             })
         } else {
             print(error.localizedDescription)
